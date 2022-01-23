@@ -3,6 +3,7 @@
 namespace App;
 
 use Exception;
+use Exceptions\InvalidKeyException;
 
 class ConfigParser
 {
@@ -47,6 +48,10 @@ class ConfigParser
         return (bool) $numberOfFilesLoaded;
     }
 
+
+    /**
+     * Return if there were any errors from loading files
+     */
     public function hasErrors(): bool
     {
         return (bool) count($this->errors);
@@ -89,6 +94,7 @@ class ConfigParser
      * Traverse the array to the dot path
      *
      * Note PHP8 can return union type
+     * @throws Exception
      * @return ?string|array
      */
     private function getPath(string $path, array $data)
@@ -103,7 +109,7 @@ class ConfigParser
             if (array_key_exists($key, $data)) {
                 $data = $data[$key];
             } else {
-                $found = false;
+                throw new InvalidKeyException("Invalid key");
             }
         }
 
@@ -114,10 +120,15 @@ class ConfigParser
      * Return the value or array
      * Note PHP8 can return union type
      *
-     * @return ?string|array
+     * @throws InvalidKeyException
+     * @return string|array
      */
     public function getValue(string $path)
     {
-        return $this->getPath($path, $this->config);
+        try {
+            return $this->getPath($path, $this->config);
+        } catch (InvalidKeyException $e) {
+            throw new InvalidKeyException($e->getMessage());
+        }
     }
 }

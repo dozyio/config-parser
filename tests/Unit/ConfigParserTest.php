@@ -4,6 +4,7 @@ namespace Test\Unit;
 
 use App\ConfigParser;
 use Exception;
+use Exceptions\InvalidKeyException;
 use PHPUnit\Framework\TestCase;
 
 class ConfigParserTest extends TestCase
@@ -96,7 +97,7 @@ class ConfigParserTest extends TestCase
         $testArray = ['test' => 1];
         $contentToArrayMethod = $this->getPrivateMethod(ConfigParser::class, 'getPath');
 
-        $result = $contentToArrayMethod->invokeArgs($parser, [$testPath, $testArray]);
-        $this->assertEquals(null, $result);
+        $this->expectException(InvalidKeyException::class);
+        $contentToArrayMethod->invokeArgs($parser, [$testPath, $testArray]);
     }
 }

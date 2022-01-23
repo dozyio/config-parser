@@ -11,16 +11,20 @@ composer install
 ```
 
 ## Usage example
-
 ```
 $parser = new ConfigParser();
 $parser->load('file1.json', 'file2.json');
 if ($parser->hasErrors()) {
-    // ... handle errors
+    // handle errors
     // print_r($parser->errors);
+    // die();
 }
-$value = $parser->getValue('database.host');
-print_r($value);
+try {
+    $value = $parser->getValue('database.host');
+    print_r($value);
+} catch (InvalidKeyException $e) {
+    // handle invalid key
+}
 ```
 
 ## Testing
@@ -52,7 +56,7 @@ make build
 make test
 ```
 
-### Build and run test
+### Build and run tests
 ```
 make all
 ```
