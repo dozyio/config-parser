@@ -123,7 +123,7 @@ class ConfigParser
      * @throws InvalidKeyException
      * @return string|array
      */
-    public function getValue(string $path)
+    public function get(string $path)
     {
         try {
             return $this->getPath($path, $this->config);

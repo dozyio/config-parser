@@ -20,7 +20,7 @@ if ($parser->hasErrors()) {
     // die();
 }
 try {
-    $value = $parser->getValue('database.host');
+    $value = $parser->get('database.host');
     print_r($value);
 } catch (InvalidKeyException $e) {
     // handle invalid key

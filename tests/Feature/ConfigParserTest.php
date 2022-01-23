@@ -86,7 +86,7 @@ class ConfigParserTest extends TestCase
         $result = $parser->load($testFile1);
         $this->assertEquals(true, $result);
 
-        $result = $parser->getValue('database.host');
+        $result = $parser->get('database.host');
         $this->assertEquals($expected, $result);
     }
 
@@ -103,7 +103,7 @@ class ConfigParserTest extends TestCase
         $result = $parser->load($testFile1);
         $this->assertEquals(true, $result);
 
-        $result = $parser->getValue('cache');
+        $result = $parser->get('cache');
         $this->assertEquals($expected, $result);
     }
 
@@ -119,7 +119,7 @@ class ConfigParserTest extends TestCase
         $result = $parser->load($testFile1, $testFile2);
         $this->assertEquals(true, $result);
 
-        $result = $parser->getValue('database.host');
+        $result = $parser->get('database.host');
         $this->assertEquals($expected, $result);
     }
 
@@ -137,7 +137,7 @@ class ConfigParserTest extends TestCase
         $result = $parser->load($testFile1, $testFile2);
         $this->assertEquals(true, $result);
 
-        $result = $parser->getValue('cache');
+        $result = $parser->get('cache');
         $this->assertEquals($expected, $result);
     }
 }
