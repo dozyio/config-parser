@@ -75,4 +75,69 @@ class ConfigParserTest extends TestCase
         $result = $parser->hasErrors();
         $this->assertEquals(true, $result);
     }
+
+    /** @test */
+    public function can_get_value_from_config(): void
+    {
+        $testFile1 = 'tests/fixtures/config.json';
+        $expected = 'mysql';
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile1);
+        $this->assertEquals(true, $result);
+
+        $result = $parser->getValue('database.host');
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test */
+    public function can_get_array_from_config(): void
+    {
+        $testFile1 = 'tests/fixtures/config.json';
+
+        $expected = ["redis" =>
+            ["host" => "redis", "port" => 6379]
+        ];
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile1);
+        $this->assertEquals(true, $result);
+
+        $result = $parser->getValue('cache');
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test */
+    public function can_get_value_from_second_config(): void
+    {
+        $testFile1 = 'tests/fixtures/config.json';
+        $testFile2 = 'tests/fixtures/config.local.json';
+
+        $expected = '127.0.0.1';
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile1, $testFile2);
+        $this->assertEquals(true, $result);
+
+        $result = $parser->getValue('database.host');
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test */
+    public function can_get_array_from_second_config(): void
+    {
+        $testFile1 = 'tests/fixtures/config.json';
+        $testFile2 = 'tests/fixtures/config.local.json';
+
+        $expected = ["redis" =>
+            ["host" => "127.0.0.1", "port" => 6379]
+        ];
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile1, $testFile2);
+        $this->assertEquals(true, $result);
+
+        $result = $parser->getValue('cache');
+        $this->assertEquals($expected, $result);
+    }
 }
