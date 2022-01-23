@@ -7,20 +7,25 @@ use Exception;
 class ConfigParser
 {
     /**
+     * Holds the current configuation
      * @var array $config
      */
     public $config = [];
 
     /**
-     * @var ?mixed $result
+     * Errors for load file errors
+     * @var array $errors
      */
-    private $result = null;
+    public $errors = [];
 
     /**
      * Load files and merge into config
      */
-    public function load(string ...$filenames)
+    public function load(string ...$filenames): bool
     {
+        $this->errors = [];
+        $numberOfFilesLoaded = 0;
+
         foreach ($filenames as $filename) {
             try {
                 if (file_exists($filename)) {
@@ -31,24 +36,36 @@ class ConfigParser
                     }
 
                     $this->config = array_merge($this->config, $this->contentToArray($content, $filename));
+                    $numberOfFilesLoaded++;
                 } else {
-                    throw new Exception('Unable to open file');
+                    throw new Exception('File does not exist');
                 }
             } catch (Exception $e) {
-                echo 'Skipping ' . $filename . ': ' . $e->getMessage();
+                $this->errors[] = "Skipping $filename: ".$e->getMessage();
             }
         }
+        return (bool) $numberOfFilesLoaded;
+    }
+
+    public function hasErrors(): bool
+    {
+        return (bool) count($this->errors);
     }
 
     /**
-     * Parse file and return array
+     * Parse content and return array
+     *
+     * @throws Exception
      */
     private function contentToArray(string $content, string $filename): array
     {
+        $array = null;
         $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
         switch ($ext) {
             case 'json':
+                // Simple json_decode here but could be a class per file type supported.
+                // Class could be implementation of a Parser interface.
                 $array = json_decode($content, true);
                 break;
             /*
@@ -70,12 +87,16 @@ class ConfigParser
 
     /**
      * Traverse the array to the dot path
+     *
+     * Note PHP8 can return union type
+     * @return ?string|array
      */
-    private function getPath(string $path, array $data): bool
+    private function getPath(string $path, array $data)
     {
         $found = true;
         $path = explode(".", $path);
 
+        // Loop through path entries, replacing $data array with current path
         for ($i = 0; $i < count($path) && $found; $i++) {
             $key = $path[$i];
 
@@ -86,41 +107,17 @@ class ConfigParser
             }
         }
 
-        if ($found) {
-            $this->result = $data;
-        }
-
-        return $found;
+        return $found ? $data : null;
     }
 
     /**
-     * Return the leaf value or array
+     * Return the value or array
+     * Note PHP8 can return union type
      *
-     * @return string|array
+     * @return ?string|array
      */
     public function getValue(string $path)
     {
-        try {
-            if ($this->getPath($path, $this->config)) {
-                return $this->result;
-            }
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
+        return $this->getPath($path, $this->config);
     }
 }
-/*
-$configParser = new ConfigParser();
-
-$configParser->load('fixtures/config.json', 'config.invalid.json');
-print_r($configParser->config);
-
-$dotKey = 'database.host';
-echo $dotKey . ": " . print_r($configParser->getValue($dotKey), 1)."\n";
-
-$configParser->load('fixtures/config.local.json');
-print_r($configParser->config);
-
-$dotKey = 'cache';
-echo $dotKey . ": " . print_r($configParser->getValue($dotKey), 1)."\n";
-*/
