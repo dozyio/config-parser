@@ -5,8 +5,6 @@ namespace Test\Feature;
 use App\ConfigParser;
 use PHPUnit\Framework\TestCase;
 
-use function PHPUnit\Framework\assertEquals;
-
 class ConfigParserTest extends TestCase
 {
     /** @test */
@@ -16,6 +14,65 @@ class ConfigParserTest extends TestCase
 
         $parser = new ConfigParser();
         $parser->load($testFile);
-        assertEquals(json_decode(file_get_contents($testFile), true), $parser->config);
+        $this->assertEquals(json_decode(file_get_contents($testFile), true), $parser->config);
+    }
+
+    /** @test */
+    public function can_not_load_missing_json_config(): void
+    {
+        $testFile = 'tests/fixtures/config.json-missing';
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile);
+        $this->assertEquals(false, $result);
+    }
+
+    /** @test */
+    public function can_not_load_invalid_json_config(): void
+    {
+        $testFile = 'tests/fixtures/config.invalid.json';
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile);
+        $this->assertEquals(false, $result);
+    }
+
+    /** @test */
+    public function can_load_multiple_json_configs(): void
+    {
+        $testFile1 = 'tests/fixtures/config.json';
+        $testFile2 = 'tests/fixtures/config.local.json';
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile1, $testFile2);
+        $this->assertEquals(true, $result);
+    }
+
+    /** @test */
+    public function loading_invalid_json_config_sets_error(): void
+    {
+        $testFile = 'tests/fixtures/config.invalid.json';
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile);
+        $this->assertEquals(false, $result);
+
+        $result = $parser->hasErrors();
+        $this->assertEquals(true, $result);
+    }
+
+    /** @test */
+    public function can_load_multiple_json_configs_including_invalid(): void
+    {
+        $testFile1 = 'tests/fixtures/config.json';
+        $testFile2 = 'tests/fixtures/config.invalid.json';
+        $testFile3 = 'tests/fixtures/config.local.json';
+
+        $parser = new ConfigParser();
+        $result = $parser->load($testFile1, $testFile2, $testFile3);
+        $this->assertEquals(true, $result);
+
+        $result = $parser->hasErrors();
+        $this->assertEquals(true, $result);
     }
 }
