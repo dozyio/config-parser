@@ -39,3 +39,20 @@ vendor/bin/paratest
 ```
 vendor/bin/phpunit path/to/test
 ```
+
+## Testing with Docker
+
+### Build image
+```
+make build
+```
+
+### Run tests
+```
+make test
+```
+
+### Build and run test
+```
+make all
+```
