@@ -24,7 +24,6 @@ RUN composer install \
 #php layer
 FROM php:${PHP_VERSION} as php_layer
 WORKDIR /app
-COPY --from=src_layer /app .
 COPY --from=composer_layer /app .
 
 CMD ["vendor/bin/phpunit"]
