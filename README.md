@@ -5,7 +5,7 @@ enables the lookup of values via dot notation.
 
 ## Install
 ```
-git clone https://github.com/dozyio/config-chg config-parser
+git clone https://github.com/dozyio/config-parser config-parser
 cd config-parser
 composer install
 ```
