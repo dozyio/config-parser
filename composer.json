@@ -1,0 +1,17 @@
+{
+    "name": "dozyio/configparser",
+    "type": "project",
+    "description": "Parse config files and query with dot notation",
+    "license": "MIT",
+    "require": {
+        "php": "^7.4|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    }
+}

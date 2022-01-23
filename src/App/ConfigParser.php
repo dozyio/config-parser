@@ -109,7 +109,7 @@ class ConfigParser
         }
     }
 }
-
+/*
 $configParser = new ConfigParser();
 
 $configParser->load('fixtures/config.json', 'config.invalid.json');
@@ -123,3 +123,4 @@ print_r($configParser->config);
 
 $dotKey = 'cache';
 echo $dotKey . ": " . print_r($configParser->getValue($dotKey), 1)."\n";
+*/

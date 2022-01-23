@@ -1,2 +1,5 @@
 .nvimrc
 .php-cs-fixer.cache
+.phpcd
+.phpunit.result.cache
+vendor/
